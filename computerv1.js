@@ -32,6 +32,7 @@ function polynomial(expr) {
 
 function main(args) {
 	argsHandler(args);
+	console.log(`sick spelling`);
 	console.log(2/0);
 	console.log(`welp`);
 }
