@@ -25,13 +25,11 @@ var expr;
 
 const argsHandler = (args) => {
 	if (args.length != 3) {
-		console.log(`bugger off`);
+		console.log(`Usage: node computerv1.js \"expression\"`);
 		process.exit(1);
 	}
 	else {
 		polynomial(args);
-		console.log(`still bugger off`);
-		console.log(`${args[2]}\ndefo still bugger off`);
 	}
 }
 
@@ -45,15 +43,13 @@ const division = (num1, num2) => {
 
 const polynomial = (expr) => {
 	// always reduce equation first
-	console.log(expr);
 	var polySplit = expr[2].split(`=`);
 	var polyKV = {
-		leftSide : polySplit[0],
-		rightSide : polySplit[1]
+		leftSide : polySplit[0].trim().split(` `),
+		rightSide : polySplit[1].trim().split(` `)
 	};
 	console.log(polyKV);
-	var reducedForm;
-	reducedForm = reducedForm();
+	var reducedEq = reducedForm(polyKV);
 	var polyDegree;
 	var discriminant;
 	console.log(`Reduced form: (whatever the fuck that is)`);
@@ -61,8 +57,59 @@ const polynomial = (expr) => {
 	console.log(`Sign of discriminant (whatever the fuck that is) if it exists and solution(s)`);
 }
 
-const reducedForm = () => {
-	return(``);
+const reducedForm = (polyEq) => {
+	var leftPolyEq = polyEq.leftSide;
+	var rightPolyEq = polyEq.rightSide;
+	var symSplitLeftEq = [];
+	var symSplitRightEq = [];
+	splitSym(symSplitLeftEq, leftPolyEq);
+	splitSym(symSplitRightEq, rightPolyEq);
+	var conv;
+	try {
+		conv = parseInt(rightPolyEq[0], 10);
+		console.log(conv);
+	}
+	catch (err) {
+		console.log(`Conversion failed`);
+	}
+	if (rightPolyEq.length > 1 || conv !== 0) {
+		swapSign(symSplitRightEq);
+		console.log(symSplitLeftEq);
+		console.log(symSplitRightEq);
+		console.log(`reduction time`);
+	}
+	console.log(`Left split: ${symSplitLeftEq}`);
+	console.log(`Right split: ${symSplitRightEq}`);
+}
+
+const splitSym = (newSplit, oldSplit) => {
+	var nIter = 0;
+	newSplit[nIter] = oldSplit[nIter];
+	for (var oIter = 1; oIter < oldSplit.length; oIter++) {
+		if (oldSplit[oIter] == `+` || oldSplit[oIter] == `-`) {
+			nIter++;
+			newSplit[nIter] = oldSplit[oIter];
+		}
+		else {
+			newSplit[nIter] = newSplit[nIter] + oldSplit[oIter];
+		}
+	}
+}
+
+const swapSign = (rightPolyEq) => {
+	var i = 0;
+	while (i < rightPolyEq.length) {
+		if (rightPolyEq[i][0] == `-`) {
+			rightPolyEq[i][0] = `+`;
+		}
+		else if (rightPolyEq[i][0] == `+`) {
+			rightPolyEq[i][0] = `-`;
+		}
+		else {
+			rightPolyEq[i] = `-` + rightPolyEq[i];
+		}
+		i++;
+	}
 }
 
 const degree = () => {
