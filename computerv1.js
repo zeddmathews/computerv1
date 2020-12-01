@@ -94,7 +94,7 @@ const reducedForm = (polyEq) => {
 	var symSplitRightEq = [];
 	splitSym(symSplitLeftEq, leftPolyEq);
 	splitSym(symSplitRightEq, rightPolyEq);
-	negativePower(symSplitLeftEq, symSplitRightEq);
+	weirdPowers(symSplitLeftEq, symSplitRightEq);
 	var conv;
 	try {
 		conv = parseInt(rightPolyEq[0], 10);
