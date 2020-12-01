@@ -33,12 +33,20 @@ const argsHandler = (args) => {
 	}
 }
 
-const division = (num1, num2) => {
-	if (num2 === 0) {
-		console.log(`division by 0 is undefined`);
-		process.exit(1);
-	}
-	return (num1/num2);
+const polynomial = (expr) => {
+	// always reduce equation first
+	var polySplit = expr[2].split(`=`);
+	var polyKV = {
+		leftSide : polySplit[0].trim().split(` `),
+		rightSide : polySplit[1].trim().split(` `)
+	};
+	console.log(polyKV);
+	var reducedEq = reducedForm(polyKV);
+	var polyDegree;
+	var discriminant;
+	console.log(`Reduced form: (whatever the fuck that is)`);
+	console.log(`Polynomial degree: (can read if it's greater than 2, doesn't solve tho)`);
+	console.log(`Sign of discriminant (whatever the fuck that is) if it exists and solution(s)`);
 }
 
 const weirdPowers = (leftSplit, rightSplit) => {
@@ -65,20 +73,9 @@ const weirdPowers = (leftSplit, rightSplit) => {
 	}
 }
 
-const polynomial = (expr) => {
-	// always reduce equation first
-	var polySplit = expr[2].split(`=`);
-	var polyKV = {
-		leftSide : polySplit[0].trim().split(` `),
-		rightSide : polySplit[1].trim().split(` `)
-	};
-	console.log(polyKV);
-	var reducedEq = reducedForm(polyKV);
-	var polyDegree;
-	var discriminant;
-	console.log(`Reduced form: (whatever the fuck that is)`);
-	console.log(`Polynomial degree: (can read if it's greater than 2, doesn't solve tho)`);
-	console.log(`Sign of discriminant (whatever the fuck that is) if it exists and solution(s)`);
+const consolidateEq = (leftEq, rightEq, fullEq) => {
+	for (let lI in leftEq) fullEq.push(leftEq[lI]);
+	for (let rI in rightEq) fullEq.push(rightEq[rI]);
 }
 
 const reducedForm = (polyEq) => {
@@ -89,6 +86,7 @@ const reducedForm = (polyEq) => {
 	splitSym(symSplitLeftEq, leftPolyEq);
 	splitSym(symSplitRightEq, rightPolyEq);
 	weirdPowers(symSplitLeftEq, symSplitRightEq);
+
 	var conv;
 	try {
 		conv = parseInt(rightPolyEq[0], 10);
@@ -97,14 +95,31 @@ const reducedForm = (polyEq) => {
 	catch (err) {
 		console.log(`Conversion failed`);
 	}
+
 	if (rightPolyEq.length > 1 || conv !== 0) {
 		swapSign(symSplitRightEq);
 		console.log(symSplitLeftEq);
 		console.log(symSplitRightEq);
 		console.log(`reduction time`);
 	}
+
+	var fullEq = [];
+	consolidateEq(symSplitLeftEq, symSplitRightEq, fullEq);
+	console.log(fullEq);
+
+	var disc = 0;
+	var degrees = {
+		zero : [],
+		first : [],
+		second : []
+	};
+	degree(degrees, fullEq, disc);
 	console.log(`Left split: ${symSplitLeftEq}`);
 	console.log(`Right split: ${symSplitRightEq}`);
+	console.log(`Disc val: ${disc}`);
+	console.log(`Zero degree: ${degrees.zero}`);
+	console.log(`First degree: ${degrees.first}`);
+	console.log(`Second degree: ${degrees.second}`);
 }
 
 const splitSym = (newSplit, oldSplit) => {
@@ -119,7 +134,7 @@ const splitSym = (newSplit, oldSplit) => {
 			if (newSplit[nIter].includes(`/`)) {
 				var divSplit = newSplit[nIter].split(`/`);
 				if (parseInt(divSplit[1]) === 0) {
-					console.log(`${newSplit[nIter]} Division by zero is not allowed`);
+					console.log(`${newSplit[nIter]} Division by zero is not allowed (undefined)`);
 					process.exit(1);
 				}
 				newSplit[nIter] = (parseFloat(divSplit[0]) / parseFloat(divSplit[1]));
@@ -132,19 +147,29 @@ const splitSym = (newSplit, oldSplit) => {
 
 const swapSign = (rightPolyEq) => {
 	for (var i = 0; i < rightPolyEq.length; i++) {
-		if (rightPolyEq[i][0] == `-`) {
-			rightPolyEq[i][0] = `+`;
-		}
-		else if (rightPolyEq[i][0] == `+`) {
-			rightPolyEq[i][0] = `-`;
-		}
-		else {
-			rightPolyEq[i] = `-` + rightPolyEq[i];
-		}
+		if (rightPolyEq[i][0] == `-`) rightPolyEq[i][0] = `+`;
+		else if (rightPolyEq[i][0] == `+`) rightPolyEq[i][0] = `-`;
+		else rightPolyEq[i] = `-` + rightPolyEq[i];
 	}
 }
 
-const degree = () => {
+const degree = (degrees, fullEq, disc) => {
+	for (i in fullEq) {
+		var degreeSplit = fullEq[i].split(`^`);
+		var conv = parseInt(degreeSplit[1]);
+		if (conv === 0) degrees.zero.push(fullEq[i]);
+		if (conv === 1) degrees.first.push(fullEq[i]);
+		if (conv === 2) degrees.second.push(fullEq[i]);
+		if (conv > disc) disc = conv;
+	}
+	if (disc > 2) {
+		console.log(`Degree is greater than 2 (${disc}), cannot solve`);
+		process.exit(1);
+	}
+	else solveEq(degrees);
+}
+
+const solveEq = (degrees) => {
 
 }
 
