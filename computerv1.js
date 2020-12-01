@@ -47,27 +47,21 @@ const weirdPowers = (leftSplit, rightSplit) => {
 		if (leftSplit[leftI].includes(`^`)) {
 			var leftPowerSplit = leftSplit[leftI].split(`^`);
 			if (leftPowerSplit[1][0] == `-`) err.push(`${leftSplit[leftI]} contains a negative power`);
-			if (leftPowerSplit[1].includes(`/`)) err.push(`${leftPowerSplit[1]} contains a fractional exponent`);
-			if (err.length > 0) {
-				for (let error in err) {
-					console.log(err[error]);
-				}
-				process.exit(1);
-			}
+			if (leftPowerSplit[1].includes(`/`)) err.push(`${leftSplit[leftI]} contains a fractional exponent`);
 		}
 	}
 	for (var rightI = 0; rightI < rightSplit.length; rightI++) {
 		if (rightSplit[rightI].includes(`^`)) {
 			var rightPowerSplit = rightSplit[rightI].split(`^`);
 			if (rightPowerSplit[1][0] == `-`) err.push(`${rightSplit[rightI]} contains a negative power`);
-			if (rightPowerSplit[1].includes(`/`)) err.push(`${rightPowerSplit[1]} contains a fractional exponent`);
-			if (err.length > 0) {
-				for (let error in err) {
-					console.log(err[error]);
-				}
-				process.exit(1);
-			};
+			if (rightPowerSplit[1].includes(`/`)) err.push(`${rightSplit[rightI]} contains a fractional exponent`);
 		}
+	}
+	if (err.length > 0) {
+		for (let error in err) {
+			console.log(err[error]);
+		}
+		process.exit(1);
 	}
 }
 
