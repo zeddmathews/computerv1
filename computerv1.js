@@ -41,6 +41,27 @@ const division = (num1, num2) => {
 	return (num1/num2);
 }
 
+const negativePower = (leftSplit, rightSplit) => {
+	for (var leftI = 0; leftI < leftSplit.length; leftI++) {
+		if (leftSplit[leftI].includes(`^`)) {
+			var powerSplit = leftSplit[leftI].split(`^`);
+			if (powerSplit[1][0] == `-`) {
+				console.log(`${leftSplit[leftI]} contains a negative power`);
+				process.exit(1);
+			}
+		}
+	}
+	for (var rightI = 0; rightI < rightSplit.length; rightI++) {
+		if (rightSplit[rightI].includes(`^`)) {
+			var powerSplit = rightSplit[rightI].split(`^`);
+			if (powerSplit[1][0] == `-`) {
+				console.log(`${rightSplit[rightI]} contains a negative power`);
+				process.exit(1);
+			}
+		}
+	}
+}
+
 const polynomial = (expr) => {
 	// always reduce equation first
 	var polySplit = expr[2].split(`=`);
@@ -64,6 +85,7 @@ const reducedForm = (polyEq) => {
 	var symSplitRightEq = [];
 	splitSym(symSplitLeftEq, leftPolyEq);
 	splitSym(symSplitRightEq, rightPolyEq);
+	negativePower(symSplitLeftEq, symSplitRightEq);
 	var conv;
 	try {
 		conv = parseInt(rightPolyEq[0], 10);
@@ -91,14 +113,22 @@ const splitSym = (newSplit, oldSplit) => {
 			newSplit[nIter] = oldSplit[oIter];
 		}
 		else {
+			if (newSplit[nIter].includes(`/`)) {
+				var divSplit = newSplit[nIter].split(`/`);
+				if (parseInt(divSplit[1]) === 0) {
+					console.log(`${newSplit[nIter]} Division by zero is not allowed`);
+					process.exit(1);
+				}
+				newSplit[nIter] = (parseFloat(divSplit[0]) / parseFloat(divSplit[1]));
+				newSplit[nIter].toString();
+			}
 			newSplit[nIter] = newSplit[nIter] + oldSplit[oIter];
 		}
 	}
 }
 
 const swapSign = (rightPolyEq) => {
-	var i = 0;
-	while (i < rightPolyEq.length) {
+	for (var i = 0; i < rightPolyEq.length; i++) {
 		if (rightPolyEq[i][0] == `-`) {
 			rightPolyEq[i][0] = `+`;
 		}
@@ -108,7 +138,6 @@ const swapSign = (rightPolyEq) => {
 		else {
 			rightPolyEq[i] = `-` + rightPolyEq[i];
 		}
-		i++;
 	}
 }
 
