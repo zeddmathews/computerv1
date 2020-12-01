@@ -41,23 +41,32 @@ const division = (num1, num2) => {
 	return (num1/num2);
 }
 
-const negativePower = (leftSplit, rightSplit) => {
+const weirdPowers = (leftSplit, rightSplit) => {
+	var err = [];
 	for (var leftI = 0; leftI < leftSplit.length; leftI++) {
 		if (leftSplit[leftI].includes(`^`)) {
-			var powerSplit = leftSplit[leftI].split(`^`);
-			if (powerSplit[1][0] == `-`) {
-				console.log(`${leftSplit[leftI]} contains a negative power`);
+			var leftPowerSplit = leftSplit[leftI].split(`^`);
+			if (leftPowerSplit[1][0] == `-`) err.push(`${leftSplit[leftI]} contains a negative power`);
+			if (leftPowerSplit[1].includes(`/`)) err.push(`${leftPowerSplit[1]} contains a fractional exponent`);
+			if (err.length > 0) {
+				for (let error in err) {
+					console.log(err[error]);
+				}
 				process.exit(1);
 			}
 		}
 	}
 	for (var rightI = 0; rightI < rightSplit.length; rightI++) {
 		if (rightSplit[rightI].includes(`^`)) {
-			var powerSplit = rightSplit[rightI].split(`^`);
-			if (powerSplit[1][0] == `-`) {
-				console.log(`${rightSplit[rightI]} contains a negative power`);
+			var rightPowerSplit = rightSplit[rightI].split(`^`);
+			if (rightPowerSplit[1][0] == `-`) err.push(`${rightSplit[rightI]} contains a negative power`);
+			if (rightPowerSplit[1].includes(`/`)) err.push(`${rightPowerSplit[1]} contains a fractional exponent`);
+			if (err.length > 0) {
+				for (let error in err) {
+					console.log(err[error]);
+				}
 				process.exit(1);
-			}
+			};
 		}
 	}
 }
