@@ -40,11 +40,10 @@ const polynomial = (expr) => {
 		leftSide : polySplit[0].trim().split(` `),
 		rightSide : polySplit[1].trim().split(` `)
 	};
-	console.log(polyKV);
-	var reducedEq = reducedForm(polyKV);
+	// console.log(polyKV);
+	reducedForm(polyKV);
 	var polyDegree;
 	var discriminant;
-	console.log(`Reduced form: (whatever the fuck that is)`);
 	console.log(`Polynomial degree: (can read if it's greater than 2, doesn't solve tho)`);
 	console.log(`Sign of discriminant (whatever the fuck that is) if it exists and solution(s)`);
 }
@@ -89,8 +88,8 @@ const reducedForm = (polyEq) => {
 
 	var conv;
 	try {
-		conv = parseInt(rightPolyEq[0], 10);
-		console.log(conv);
+		conv = parseFloat(rightPolyEq[0], 10);
+		// console.log(conv);
 	}
 	catch (err) {
 		console.log(`Conversion failed`);
@@ -98,14 +97,13 @@ const reducedForm = (polyEq) => {
 
 	if (rightPolyEq.length > 1 || conv !== 0) {
 		swapSign(symSplitRightEq);
-		console.log(symSplitLeftEq);
-		console.log(symSplitRightEq);
-		console.log(`reduction time`);
+		// console.log(symSplitLeftEq);
+		// console.log(symSplitRightEq);
 	}
 
 	var fullEq = [];
 	consolidateEq(symSplitLeftEq, symSplitRightEq, fullEq);
-	console.log(fullEq);
+	// console.log(fullEq);
 
 	var disc = 0;
 	var degrees = {
@@ -114,12 +112,12 @@ const reducedForm = (polyEq) => {
 		second : []
 	};
 	degree(degrees, fullEq, disc);
-	console.log(`Left split: ${symSplitLeftEq}`);
-	console.log(`Right split: ${symSplitRightEq}`);
-	console.log(`Disc val: ${disc}`);
-	console.log(`Zero degree: ${degrees.zero}`);
-	console.log(`First degree: ${degrees.first}`);
-	console.log(`Second degree: ${degrees.second}`);
+	// console.log(`Left split: ${symSplitLeftEq}`);
+	// console.log(`Right split: ${symSplitRightEq}`);
+	// console.log(`Disc val: ${disc}`);
+	// console.log(`Zero degree: ${degrees.zero}`);
+	// console.log(`First degree: ${degrees.first}`);
+	// console.log(`Second degree: ${degrees.second}`);
 }
 
 const splitSym = (newSplit, oldSplit) => {
@@ -133,7 +131,7 @@ const splitSym = (newSplit, oldSplit) => {
 		else {
 			if (newSplit[nIter].includes(`/`)) {
 				var divSplit = newSplit[nIter].split(`/`);
-				if (parseInt(divSplit[1]) === 0) {
+				if (parseFloat(divSplit[1]) === 0) {
 					console.log(`${newSplit[nIter]} Division by zero is not allowed (undefined)`);
 					process.exit(1);
 				}
@@ -156,21 +154,52 @@ const swapSign = (rightPolyEq) => {
 const degree = (degrees, fullEq, disc) => {
 	for (i in fullEq) {
 		var degreeSplit = fullEq[i].split(`^`);
-		var conv = parseInt(degreeSplit[1]);
+		var conv = parseFloat(degreeSplit[1]);
 		if (conv === 0) degrees.zero.push(fullEq[i]);
 		if (conv === 1) degrees.first.push(fullEq[i]);
 		if (conv === 2) degrees.second.push(fullEq[i]);
 		if (conv > disc) disc = conv;
 	}
+	if (degrees.zero.length === 0) degrees.zero.push(`0*X^0`);
+	if (degrees.first.length === 0) degrees.zero.push(`0*X^1`);
+	if (degrees.second.length === 0) degrees.zero.push(`0*X^2`);
 	if (disc > 2) {
 		console.log(`Degree is greater than 2 (${disc}), cannot solve`);
 		process.exit(1);
 	}
-	else solveEq(degrees);
+	else solveEq(degrees, disc);
 }
 
-const solveEq = (degrees) => {
+const solveDegree = (degree, reducedForm) => {
+	let final = 0;
+	let numSplit = [];
+	if (degree.length > 0) {
+		for (i in degree) {
+			numSplit = degree[i].split(`*`);
+			final += parseFloat(numSplit[0]);
+		}
+		// console.log(final);
+		reducedForm.push(`${final.toString()}*${numSplit[1]}`);
+		// console.log(`am here ${reducedForm}`);
+	}
+}
 
+const solveEq = (degrees, disc) => {
+	let a = [];
+	let b = [];
+	let c = [];
+	solveDegree(degrees.zero, c);
+	solveDegree(degrees.first, b);
+	solveDegree(degrees.second, a);
+	let newB = b;
+	let newC = c;
+	rebuildEq(newB, newC, disc);
+	if (disc == 2) console.log(`Reduced form: ${a} ${newB} ${newC} = 0`);
+}
+
+const rebuildEq = (b, c, disc) => {
+	if (b[0][0] != `-`) b[0] = `+ ${b[0]}`;
+	if (c[0][0] != `-`) c[0] = `+ ${c[0]}`;
 }
 
 const squareRoot = () => {
@@ -180,9 +209,9 @@ const squareRoot = () => {
 const main = (args) => {
 	// console.log(args);
 	argsHandler(args);
-	console.log(`sick spelling`);
-	console.log(2/0);
-	console.log(`welp`);
+	// console.log(`sick spelling`);
+	// console.log(2/0);
+	// console.log(`welp`);
 }
 
 main(args);
