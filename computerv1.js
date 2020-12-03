@@ -140,10 +140,6 @@ const degree = (degrees, fullEq, disc) => {
 	if (degrees.zero.length === 0) degrees.zero.push(`0*X^0`);
 	if (degrees.first.length === 0) degrees.zero.push(`0*X^1`);
 	if (degrees.second.length === 0) degrees.zero.push(`0*X^2`);
-	if (disc > 2) {
-		console.log(`Degree is greater than 2 (${disc}), cannot solve`);
-		process.exit(1);
-	}
 	else solveEq(degrees, disc);
 }
 
@@ -203,6 +199,10 @@ const solveEq = (degrees, disc) => {
 	if (disc == 2) console.log(`Reduced form: ${a[0]}${a[1]} ${newB[0]}${newB[1]} ${newC[0]}${newC[1]} = 0`);
 	else if (disc == 1) console.log(`Reduced form: ${b[0]}${b[1]} ${newC[0]}${newC[1]} = 0`);
 	console.log(`Polynomial degree: ${disc}`);
+	if (disc > 2) {
+		console.log(`Degree is greater than 2 (${disc}), cannot solve`);
+		process.exit(1);
+	}
 	solveDisc(a[0], b[0], c[0], disc);
 }
 
