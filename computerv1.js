@@ -1,11 +1,4 @@
 const args = process.argv;
-var a;
-var b;
-var c;
-const discriminant = (b * b) -(4 * (a * c));
-const posQuadraticFormula = ((-b + /*squareRoot*/discriminant) / 2 * a);
-const negQuadraticFormula = ((-b - /*squareRoot*/discriminant) / 2 * a);
-var expr;
 
 // $>./computor "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"
 // Reduced form: 4 * X^0 + 4 * X^1 - 9.3 * X^2 = 0
@@ -42,10 +35,6 @@ const polynomial = (expr) => {
 	};
 	// console.log(polyKV);
 	reducedForm(polyKV);
-	var polyDegree;
-	var discriminant;
-	console.log(`Polynomial degree: (can read if it's greater than 2, doesn't solve tho)`);
-	console.log(`Sign of discriminant (whatever the fuck that is) if it exists and solution(s)`);
 }
 
 const weirdPowers = (leftSplit, rightSplit) => {
@@ -179,9 +168,40 @@ const solveDegree = (degree, reducedForm) => {
 			final += parseFloat(numSplit[0]);
 		}
 		// console.log(final);
-		reducedForm.push(`${final.toString()}*${numSplit[1]}`);
+		reducedForm.push(`${final.toString()}`);
+		reducedForm.push(`*${numSplit[1]}`);
 		// console.log(`am here ${reducedForm}`);
 	}
+}
+
+const rebuildEq = (b, c) => {
+	if (b[0][0] != `-`) b[0] = `+ ${b[0]}`;
+	if (c[0][0] != `-`) c[0] = `+ ${c[0]}`;
+}
+
+const solveDisc = (a, b, c, disc) => {
+	const discriminant = (b * b) -(4 * (a * c));
+	const negQuadraticFormula = ((-b - squareRoot(discriminant)) / (2 * a));
+	const posQuadraticFormula = ((-b + squareRoot(discriminant)) / (2 * a));
+	if (disc === 0) {
+		if (discriminant === 0) {
+			console.log(`This equation accepts all real numbers as solution`);
+			status.exit(1);
+		}
+		else {
+			console.log(`This equation has no solution`);
+			status.exit(1);
+		}
+	}
+	if (disc === 2) {
+		if (discriminant > 0) console.log(`Discriminant is strictly positive, the two solutions are:\n${negQuadraticFormula}\n${posQuadraticFormula}`);
+		else if (discriminant < 0) console.log(`Discriminant is strictly negative, the two solutions are:\n${negQuadraticFormula}\n${posQuadraticFormula}`);
+		else {
+			console.log(`Discriminant is zerom the solution is:\n${negQuadraticFormula}`);
+			status.exit(1);
+		}
+	}
+	else if (disc === 1) console.log(`${-c/b}`);
 }
 
 const solveEq = (degrees, disc) => {
@@ -191,20 +211,62 @@ const solveEq = (degrees, disc) => {
 	solveDegree(degrees.zero, c);
 	solveDegree(degrees.first, b);
 	solveDegree(degrees.second, a);
-	let newB = b;
-	let newC = c;
-	rebuildEq(newB, newC, disc);
-	if (disc == 2) console.log(`Reduced form: ${a} ${newB} ${newC} = 0`);
+	let newB = JSON.parse(JSON.stringify(b));
+	let newC = JSON.parse(JSON.stringify(c));
+	rebuildEq(newB, newC);
+	if (disc == 2) console.log(`Reduced form: ${a[0]}${a[1]} ${newB[0]}${newB[1]} ${newC[0]}${newC[1]} = 0`);
+	else if (disc == 1) console.log(`Reduced form: ${b[0]}${b[1]} ${newC[0]}${newC[1]} = 0`);
+	console.log(`Polynomial degree: ${disc}`);
+	solveDisc(a[0], b[0], c[0], disc);
 }
 
-const rebuildEq = (b, c, disc) => {
-	if (b[0][0] != `-`) b[0] = `+ ${b[0]}`;
-	if (c[0][0] != `-`) c[0] = `+ ${c[0]}`;
+const sqr = (n, i, j) => {
+	let mid = (i + j) / 2;
+	let mult = mid * mid;
+	if ((mult === n) || (Math.abs(mult - n) < 0.00001)) return mid
+	else if (mult < n) return (sqr(n, mid, j));
+	else return (sqr(n, i, mid));
 }
 
-const squareRoot = () => {
-
+const squareRoot = (num) => {
+	let i = 1;
+	const found = false;
+	while (!found) {
+		if (i * i === num) return (i);
+		else if (i * i > num) {
+			let res = sqr(num, i - 1, i);
+			return (res);
+		}
+		i++;
+	}
 }
+
+// const square = (n, i, j) => {
+// 	let mid = (i + j) / 2;
+// 	let mul = mid * mid;
+// 	if ((mul === n) || (Math.abs(mul - n) < 0.00001)){
+// 	   return mid;
+// 	}else if (mul < n){
+// 	   return square(n, mid, j);
+// 	}else{
+// 	   return square(n, i, mid);
+// 	}
+//  }
+//  // Function to find the square root of n
+//  const findSqrt = num => {
+// 	let i = 1;
+// 	const found = false;
+// 	while (!found){
+// 	   // If n is a perfect square
+// 	   if (i * i === num){
+// 		  return i;
+// 	   }else if (i * i > num){
+// 		  let res = square(num, i - 1, i);
+// 		  return res;
+// 	   };
+// 	   i++;
+// 	}
+//  }
 
 const main = (args) => {
 	// console.log(args);
