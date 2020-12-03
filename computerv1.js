@@ -27,13 +27,11 @@ const argsHandler = (args) => {
 }
 
 const polynomial = (expr) => {
-	// always reduce equation first
 	var polySplit = expr[2].split(`=`);
 	var polyKV = {
 		leftSide : polySplit[0].trim().split(` `),
 		rightSide : polySplit[1].trim().split(` `)
 	};
-	// console.log(polyKV);
 	reducedForm(polyKV);
 }
 
@@ -78,7 +76,6 @@ const reducedForm = (polyEq) => {
 	var conv;
 	try {
 		conv = parseFloat(rightPolyEq[0], 10);
-		// console.log(conv);
 	}
 	catch (err) {
 		console.log(`Conversion failed`);
@@ -86,13 +83,10 @@ const reducedForm = (polyEq) => {
 
 	if (rightPolyEq.length > 1 || conv !== 0) {
 		swapSign(symSplitRightEq);
-		// console.log(symSplitLeftEq);
-		// console.log(symSplitRightEq);
 	}
 
 	var fullEq = [];
 	consolidateEq(symSplitLeftEq, symSplitRightEq, fullEq);
-	// console.log(fullEq);
 
 	var disc = 0;
 	var degrees = {
@@ -101,12 +95,6 @@ const reducedForm = (polyEq) => {
 		second : []
 	};
 	degree(degrees, fullEq, disc);
-	// console.log(`Left split: ${symSplitLeftEq}`);
-	// console.log(`Right split: ${symSplitRightEq}`);
-	// console.log(`Disc val: ${disc}`);
-	// console.log(`Zero degree: ${degrees.zero}`);
-	// console.log(`First degree: ${degrees.first}`);
-	// console.log(`Second degree: ${degrees.second}`);
 }
 
 const splitSym = (newSplit, oldSplit) => {
@@ -167,10 +155,8 @@ const solveDegree = (degree, reducedForm) => {
 			numSplit = degree[i].split(`*`);
 			final += parseFloat(numSplit[0]);
 		}
-		// console.log(final);
 		reducedForm.push(`${final.toString()}`);
 		reducedForm.push(`*${numSplit[1]}`);
-		// console.log(`am here ${reducedForm}`);
 	}
 }
 
@@ -241,39 +227,8 @@ const squareRoot = (num) => {
 	}
 }
 
-// const square = (n, i, j) => {
-// 	let mid = (i + j) / 2;
-// 	let mul = mid * mid;
-// 	if ((mul === n) || (Math.abs(mul - n) < 0.00001)){
-// 	   return mid;
-// 	}else if (mul < n){
-// 	   return square(n, mid, j);
-// 	}else{
-// 	   return square(n, i, mid);
-// 	}
-//  }
-//  // Function to find the square root of n
-//  const findSqrt = num => {
-// 	let i = 1;
-// 	const found = false;
-// 	while (!found){
-// 	   // If n is a perfect square
-// 	   if (i * i === num){
-// 		  return i;
-// 	   }else if (i * i > num){
-// 		  let res = square(num, i - 1, i);
-// 		  return res;
-// 	   };
-// 	   i++;
-// 	}
-//  }
-
 const main = (args) => {
-	// console.log(args);
 	argsHandler(args);
-	// console.log(`sick spelling`);
-	// console.log(2/0);
-	// console.log(`welp`);
 }
 
 main(args);
