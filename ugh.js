@@ -51,9 +51,10 @@ const consolidateEq = (leftEq, rightEq, fullEq) => {
 const reducedForm = (polyEq) => {
 	var symSplitLeftEq = [];
 	var symSplitRightEq = [];
+	// console.log(polyEq.rightSide);
 	splitSym(symSplitLeftEq, polyEq.leftSide);
 	splitSym(symSplitRightEq, polyEq.rightSide);
-	weirdPowers(symSplitLeftEq, symSplitRightEq);
+	// weirdPowers(symSplitLeftEq, symSplitRightEq);
 
 	var conv;
 	try {
@@ -67,18 +68,18 @@ const reducedForm = (polyEq) => {
 		swapSign(symSplitRightEq);
 	}
 
-	console.log(symSplitLeftEq);
-	console.log(symSplitRightEq);
+	// console.log(symSplitLeftEq);
+	// console.log(symSplitRightEq);
 	var fullEq = [];
 	consolidateEq(symSplitLeftEq, symSplitRightEq, fullEq);
-	console.log(fullEq);
-	// var disc = 0;
-	// var degrees = {
-	// 	zero : [],
-	// 	first : [],
-	// 	second : []
-	// };
-	// degree(degrees, fullEq, disc);
+	// console.log(fullEq);
+	var power = 0;
+	var degrees = {
+		zero : [],
+		first : [],
+		second : []
+	};
+	degree(degrees, fullEq, power);
 }
 
 const splitSym = (newSplit, oldSplit) => {
@@ -90,6 +91,7 @@ const splitSym = (newSplit, oldSplit) => {
 			newSplit[nIter] = oldSplit[oIter];
 		}
 		else {
+			if (newSplit[nIter].includes(`/`)) console.log(`nani`);
 			if (newSplit[nIter].includes(`/`)) {
 				var divSplit = newSplit[nIter].split(`/`);
 				if (parseFloat(divSplit[1]) === 0) {
@@ -106,7 +108,7 @@ const splitSym = (newSplit, oldSplit) => {
 
 const swapSign = (rightPolyEq) => {
 	for (var i = 0; i < rightPolyEq.length; i++) {
-		console.log(rightPolyEq[i][0]);
+		// console.log(rightPolyEq[i][0]);
 		if (rightPolyEq[i][0] == `-`) {
 			rightPolyEq[i] = rightPolyEq[i].split(``);
 			rightPolyEq[i][0] = `+`;
@@ -121,19 +123,20 @@ const swapSign = (rightPolyEq) => {
 	}
 }
 
-const degree = (degrees, fullEq, disc) => {
+const degree = (degrees, fullEq, power) => {
 	for (i in fullEq) {
 		var degreeSplit = fullEq[i].split(`^`);
 		var conv = parseFloat(degreeSplit[1]);
 		if (conv === 0) degrees.zero.push(fullEq[i]);
 		if (conv === 1) degrees.first.push(fullEq[i]);
 		if (conv === 2) degrees.second.push(fullEq[i]);
-		if (conv > disc) disc = conv;
+		if (conv > power) power = conv;
 	}
+	// console.log(degrees);
 	if (degrees.zero.length === 0) degrees.zero.push(`0*X^0`);
-	if (degrees.first.length === 0) degrees.zero.push(`0*X^1`);
-	if (degrees.second.length === 0) degrees.zero.push(`0*X^2`);
-	solveEq(degrees, disc);
+	if (degrees.first.length === 0) degrees.first.push(`0*X^1`);
+	if (degrees.second.length === 0) degrees.second.push(`0*X^2`);
+	solveEq(degrees, power);
 }
 
 const solveDegree = (degree, reducedForm) => {
@@ -154,32 +157,32 @@ const rebuildEq = (b, c) => {
 	if (c[0][0] != `-`) c[0] = `+ ${c[0]}`;
 }
 
-const solveDisc = (a, b, c, disc) => {
+const solveDisc = (a, b, c, power) => {
 	const discriminant = (b * b) -(4 * (a * c));
 	const negQuadraticFormula = ((-b - squareRoot(discriminant)) / (2 * a));
 	const posQuadraticFormula = ((-b + squareRoot(discriminant)) / (2 * a));
-	if (disc === 0) {
+	if (power === 0) {
 		if (discriminant === 0) {
 			console.log(`This equation accepts all real numbers as solution`);
-			status.exit(1);
+			process.exit(1);
 		}
 		else {
 			console.log(`This equation has no solution`);
-			status.exit(1);
+			process.exit(1);
 		}
 	}
-	if (disc === 2) {
+	if (power === 2) {
 		if (discriminant > 0) console.log(`Discriminant is strictly positive, the two solutions are:\n${negQuadraticFormula}\n${posQuadraticFormula}`);
 		else if (discriminant < 0) console.log(`Discriminant is strictly negative, the two solutions are:\n${negQuadraticFormula}\n${posQuadraticFormula}`);
 		else {
-			console.log(`Discriminant is zerom the solution is:\n${negQuadraticFormula}`);
-			status.exit(1);
+			console.log(`Discriminant is zero the solution is:\n${negQuadraticFormula}`);
+			process.exit(1);
 		}
 	}
-	else if (disc === 1) console.log(`${-c/b}`);
+	else if (power === 1) console.log(`The solution is:\n${-c/b}`);
 }
 
-const solveEq = (degrees, disc) => {
+const solveEq = (degrees, power) => {
 	let a = [];
 	let b = [];
 	let c = [];
@@ -189,14 +192,14 @@ const solveEq = (degrees, disc) => {
 	let newB = JSON.parse(JSON.stringify(b));
 	let newC = JSON.parse(JSON.stringify(c));
 	rebuildEq(newB, newC);
-	if (disc == 2) console.log(`Reduced form: ${a[0]}${a[1]} ${newB[0]}${newB[1]} ${newC[0]}${newC[1]} = 0`);
-	else if (disc == 1) console.log(`Reduced form: ${b[0]}${b[1]} ${newC[0]}${newC[1]} = 0`);
-	console.log(`Polynomial degree: ${disc}`);
-	if (disc > 2) {
-		console.log(`Degree is greater than 2 (${disc}), cannot solve`);
+	if (power == 2) console.log(`Reduced form: ${a[0]}${a[1]} ${newB[0]}${newB[1]} ${newC[0]}${newC[1]} = 0`);
+	else if (power == 1) console.log(`Reduced form: ${b[0]}${b[1]} ${newC[0]}${newC[1]} = 0`);
+	console.log(`Polynomial degree: ${power}`);
+	if (power > 2) {
+		console.log(`Degree is greater than 2 (${power}), cannot solve`);
 		process.exit(1);
 	}
-	solveDisc(a[0], b[0], c[0], disc);
+	solveDisc(a[0], b[0], c[0], power);
 }
 
 const squareRoot = (num) => {
