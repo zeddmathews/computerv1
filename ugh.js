@@ -51,11 +51,9 @@ const consolidateEq = (leftEq, rightEq, fullEq) => {
 const reducedForm = (polyEq) => {
 	var symSplitLeftEq = [];
 	var symSplitRightEq = [];
-	// console.log(polyEq.rightSide);
 	splitSym(symSplitLeftEq, polyEq.leftSide);
 	splitSym(symSplitRightEq, polyEq.rightSide);
-	// weirdPowers(symSplitLeftEq, symSplitRightEq);
-
+	weirdPowers(symSplitLeftEq, symSplitRightEq);
 	var conv;
 	try {
 		conv = parseFloat(polyEq.rightSide[0], 10);
@@ -63,16 +61,11 @@ const reducedForm = (polyEq) => {
 	catch (err) {
 		console.log(`Conversion failed`);
 	}
-
 	if (polyEq.rightSide.length > 1 || conv !== 0) {
 		swapSign(symSplitRightEq);
 	}
-
-	// console.log(symSplitLeftEq);
-	// console.log(symSplitRightEq);
 	var fullEq = [];
 	consolidateEq(symSplitLeftEq, symSplitRightEq, fullEq);
-	// console.log(fullEq);
 	var power = 0;
 	var degrees = {
 		zero : [],
@@ -108,7 +101,6 @@ const splitSym = (newSplit, oldSplit) => {
 
 const swapSign = (rightPolyEq) => {
 	for (var i = 0; i < rightPolyEq.length; i++) {
-		// console.log(rightPolyEq[i][0]);
 		if (rightPolyEq[i][0] == `-`) {
 			rightPolyEq[i] = rightPolyEq[i].split(``);
 			rightPolyEq[i][0] = `+`;
@@ -132,7 +124,6 @@ const degree = (degrees, fullEq, power) => {
 		if (conv === 2) degrees.second.push(fullEq[i]);
 		if (conv > power) power = conv;
 	}
-	// console.log(degrees);
 	if (degrees.zero.length === 0) degrees.zero.push(`0*X^0`);
 	if (degrees.first.length === 0) degrees.first.push(`0*X^1`);
 	if (degrees.second.length === 0) degrees.second.push(`0*X^2`);
